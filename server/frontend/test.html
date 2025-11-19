@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal Test</title>
+    <style>
+        body {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            font-family: 'Consolas', monospace;
+            margin: 20px;
+        }
+        
+        .terminal-container {
+            background: #252526;
+            border: 2px solid #ff4757;
+            border-radius: 8px;
+            height: 300px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .terminal-output {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background: #000;
+            color: #2ed573;
+            font-size: 0.85rem;
+        }
+        
+        .terminal-input-line {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            background: #2d2d30;
+        }
+        
+        .terminal-prompt {
+            color: #ff4757;
+            font-weight: 700;
+            margin-right: 8px;
+        }
+        
+        .terminal-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #d4d4d4;
+            font-family: inherit;
+            outline: none;
+        }
+        
+        .terminal-command {
+            color: #ff4757;
+            font-weight: 600;
+        }
+        
+        .terminal-info {
+            color: #969696;
+        }
+        
+        .terminal-error {
+            color: #ff4757;
+        }
+    </style>
+</head>
+<body>
+    <h1>Terminal Test</h1>
+    
+    <div class="terminal-container">
+        <div id="terminalOutput" class="terminal-output">
+            Terminal Test - Type 'help' for commands<br><br>
+        </div>
+        
+        <div class="terminal-input-line">
+            <span id="terminalPrompt" class="terminal-prompt">test></span>
+            <input type="text" id="terminalInput" class="terminal-input" placeholder="Enter command...">
+        </div>
+    </div>
+    
+    <script>
+        // Test terminal functionality
+        let history = [];
+        
+        function addToTerminal(text, type = 'output') {
+            console.log('Adding to terminal:', text, 'Type:', type);
+            const terminalOutput = document.getElementById('terminalOutput');
+            const outputDiv = document.createElement('div');
+            outputDiv.className = `terminal-${type}`;
+            
+            if (type === 'command') {
+                const promptText = document.getElementById('terminalPrompt').textContent;
+                outputDiv.innerHTML = `<span class="terminal-command">${promptText} ${text}</span>`;
+            } else {
+                outputDiv.textContent = text;
+            }
+            
+            terminalOutput.appendChild(outputDiv);
+            terminalOutput.scrollTop = terminalOutput.scrollHeight;
+        }
+        
+        function executeCommand() {
+            const terminalInput = document.getElementById('terminalInput');
+            const command = terminalInput.value.trim();
+            
+            if (!command) return;
+            
+            // Add command to terminal output
+            addToTerminal(command, 'command');
+            history.unshift(command);
+            
+            // Clear input
+            terminalInput.value = '';
+            
+            // Handle commands
+            if (command.toLowerCase() === 'help') {
+                addToTerminal('Available test commands:', 'info');
+                addToTerminal('  help - Show this help', 'info');
+                addToTerminal('  clear - Clear screen', 'info');
+                addToTerminal('  test - Test message', 'info');
+            } else if (command.toLowerCase() === 'clear') {
+                document.getElementById('terminalOutput').innerHTML = 'Terminal cleared<br><br>';
+            } else if (command.toLowerCase() === 'test') {
+                addToTerminal('Test command executed successfully!', 'info');
+            } else {
+                addToTerminal(`Unknown command: ${command}`, 'error');
+            }
+        }
+        
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            const terminalInput = document.getElementById('terminalInput');
+            terminalInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    executeCommand();
+                }
+            });
+            
+            // Focus input
+            terminalInput.focus();
+            
+            console.log('Terminal test initialized');
+        });
+    </script>
+</body>
+</html>

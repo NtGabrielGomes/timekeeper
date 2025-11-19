@@ -1,0 +1,228 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap');
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #ffffff;
+    color: #212529;
+    line-height: 1.5;
+}
+ 
+/* Minimal animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Removed pulse animation completely for static markers */
+
+/* Map specific styles */
+.leaflet-container {
+    background: #f8f9fa !important;
+    font-family: 'Roboto', sans-serif !important;
+}
+
+.leaflet-control-container {
+    display: none; /* Hide all controls for clean look */
+}
+
+.leaflet-popup-content-wrapper {
+    background: #ffffff;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.leaflet-popup-tip {
+    background: #ffffff;
+}
+
+.map-container {
+    position: relative;
+}
+
+#worldMap {
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+#worldMapSVG {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.agent-dot {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.agent-dot:hover {
+    transform: scale(1.5);
+    filter: brightness(1.2);
+}
+
+.agent-os-icon {
+    pointer-events: none;
+}
+
+/* Clean animations */
+.stat-card {
+    animation: fadeIn 0.4s ease-out;
+    transition: all 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.table tr {
+    animation: fadeIn 0.3s ease-out;
+}
+
+.table tr:hover {
+    background-color: #f8f9fa !important;
+}
+
+.loading.show {
+    animation: spin 1s linear infinite;
+}
+
+/* Clean scrollbar */
+.command-output::-webkit-scrollbar {
+    width: 6px;
+}
+
+.command-output::-webkit-scrollbar-track {
+    background: #f8f9fa;
+}
+
+.command-output::-webkit-scrollbar-thumb {
+    background: #dee2e6;
+    border-radius: 3px;
+}
+
+.command-output::-webkit-scrollbar-thumb:hover {
+    background: #adb5bd;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    .stats-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+    
+    .stats-container-vertical {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    
+    .stats-container-vertical .stat-card {
+        flex: 1 1 45%;
+        min-width: 120px;
+    }
+    
+    .main-container {
+        padding: 15px;
+    }
+    
+    .map-container {
+        height: 200px;
+        margin-bottom: 20px;
+    }
+    
+    .table {
+        font-size: 0.85rem;
+    }
+    
+    .col-md-4, .col-md-8 {
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-container-vertical {
+        flex-direction: column;
+    }
+    
+    .stats-container-vertical .stat-card {
+        flex: none;
+    }
+    
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+    
+    .map-container {
+        height: 180px;
+    }
+    
+    .row {
+        flex-direction: column;
+    }
+}
+
+/* Clean button effects */
+.clean-button:hover {
+    transform: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn:hover {
+    transform: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Modal improvements */
+.modal-content {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    border: none;
+}
+
+.modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+/* Form improvements */
+.form-control:focus {
+    transform: none;
+    box-shadow: 0 0 0 0.2rem rgba(33, 37, 41, 0.1);
+}
+
+/* Login improvements */
+.login-card {
+    animation: fadeIn 0.6s ease-out;
+}
+
+/* Map container improvements */
+.map-container {
+    background: #f8f9fa;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Popup button styling */
+.popup-button {
+    transition: all 0.2s ease;
+}
+
+.popup-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
