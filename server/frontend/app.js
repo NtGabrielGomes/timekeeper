@@ -16,6 +16,43 @@ const loginScreen = document.getElementById('loginScreen');
 const dashboard = document.getElementById('dashboard');
 const loginForm = document.getElementById('loginForm');
 const loginError = document.getElementById('loginError');
+
+// Global function for settings - moved to top for global access
+function showSettings() {
+    
+    try {
+        // Check if Bootstrap is loaded
+        if (typeof bootstrap === 'undefined') {
+            console.error('Bootstrap is not loaded');
+            alert('Bootstrap library is not loaded. Please check your internet connection.');
+            return;
+        }
+        
+        // Show settings modal
+        const settingsModal = document.getElementById('settingsModal');
+        if (!settingsModal) {
+            console.error('Settings modal not found');
+            alert('Settings modal element not found in the page.');
+            return;
+        }
+        
+        console.log('Opening settings modal...');
+        const modal = new bootstrap.Modal(settingsModal);
+        modal.show();
+        
+        console.log('Settings modal opened successfully');
+        
+        // Initialize settings navigation after modal is shown
+        setTimeout(() => {
+            loadUserInfoForSettings();
+            initializeSettingsNavigation();
+            initializePasswordForm();
+        }, 100);
+        
+    } catch (error) {
+        console.error('Error in showSettings:', error);
+    }
+}
  
 // Initialize app - Consolidated DOMContentLoaded
 document.addEventListener('DOMContentLoaded', function() {
@@ -191,9 +228,219 @@ async function refreshImplants() {
     await loadImplants();
 }
 
-// Global function for settings
-function showSettings() {
-    alert('Settings panel - Coming soon!');
+// Settings functions
+async function loadUserInfoForSettings() {
+    try {
+        const response = await apiRequest('/auth/me');
+        if (response.ok) {
+            const user = await response.json();
+            document.getElementById('settingsUsername').value = user.username;
+            document.getElementById('settingsUserId').value = user.id;
+        }
+    } catch (error) {
+        console.error('Failed to load user info for settings:', error);
+    }
+}
+
+function initializeSettingsNavigation() {
+    // Remove existing event listeners to avoid duplicates
+    const navItems = ['settingsNavAccount', 'settingsNavSecurity', 'settingsNavSystem'];
+    const sections = ['settingsAccount', 'settingsSecurity', 'settingsSystem'];
+    
+    navItems.forEach((navId, index) => {
+        const navElement = document.getElementById(navId);
+        if (navElement) {
+            // Remove existing listeners by cloning the element
+            const newNavElement = navElement.cloneNode(true);
+            navElement.parentNode.replaceChild(newNavElement, navElement);
+            
+            // Add new listener
+            newNavElement.addEventListener('click', function(e) {
+                e.preventDefault();
+                showSettingsSection(sections[index]);
+                setActiveNav(this);
+            });
+        }
+    });
+}
+
+function showSettingsSection(sectionId) {
+    // Hide all sections
+    document.querySelectorAll('.settings-section').forEach(section => {
+        section.style.display = 'none';
+    });
+    
+    // Show selected section
+    document.getElementById(sectionId).style.display = 'block';
+}
+
+function setActiveNav(activeElement) {
+    // Remove active class from all nav items
+    document.querySelectorAll('.list-group-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    
+    // Add active class to selected item
+    activeElement.classList.add('active');
+}
+
+function initializePasswordForm() {
+    const form = document.getElementById('changePasswordForm');
+    const newPassword = document.getElementById('newPassword');
+    const confirmPassword = document.getElementById('confirmPassword');
+    
+    if (!form || !newPassword || !confirmPassword) {
+        console.error('Password form elements not found');
+        return;
+    }
+    
+    // Remove existing listeners by cloning elements
+    const newForm = form.cloneNode(true);
+    const newPasswordClone = newForm.querySelector('#newPassword');
+    const newConfirmPassword = newForm.querySelector('#confirmPassword');
+    form.parentNode.replaceChild(newForm, form);
+    
+    // Password strength indicator
+    newPasswordClone.addEventListener('input', function() {
+        updatePasswordStrength(this.value);
+    });
+    
+    // Form submission
+    newForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const newPass = newPasswordClone.value;
+        const confirmPass = newConfirmPassword.value;
+        
+        // Validate passwords match
+        if (newPass !== confirmPass) {
+            showPasswordResult('Passwords do not match', 'error');
+            return;
+        }
+        
+        // Validate password length
+        if (newPass.length < 8) {
+            showPasswordResult('Password must be at least 8 characters long', 'error');
+            return;
+        }
+        
+        // Change password
+        await changePassword(newPass);
+    });
+}
+
+function updatePasswordStrength(password) {
+    const strengthContainer = document.getElementById('passwordStrength');
+    const strengthBar = document.getElementById('strengthBar');
+    const strengthText = document.getElementById('strengthText');
+    
+    if (!password) {
+        strengthContainer.style.display = 'none';
+        return;
+    }
+    
+    strengthContainer.style.display = 'block';
+    
+    let strength = 0;
+    let feedback = [];
+    
+    // Length check
+    if (password.length >= 8) strength += 25;
+    else feedback.push('At least 8 characters');
+    
+    // Lowercase check
+    if (/[a-z]/.test(password)) strength += 25;
+    else feedback.push('Lowercase letter');
+    
+    // Uppercase check
+    if (/[A-Z]/.test(password)) strength += 25;
+    else feedback.push('Uppercase letter');
+    
+    // Number check
+    if (/[0-9]/.test(password)) strength += 25;
+    else feedback.push('Number');
+    
+    // Update progress bar
+    strengthBar.style.width = strength + '%';
+    
+    if (strength < 50) {
+        strengthBar.className = 'progress-bar bg-danger';
+        strengthText.textContent = 'Weak - Need: ' + feedback.join(', ');
+    } else if (strength < 75) {
+        strengthBar.className = 'progress-bar bg-warning';
+        strengthText.textContent = 'Fair - Could add: ' + feedback.join(', ');
+    } else if (strength < 100) {
+        strengthBar.className = 'progress-bar bg-info';
+        strengthText.textContent = 'Good - Could add: ' + feedback.join(', ');
+    } else {
+        strengthBar.className = 'progress-bar bg-success';
+        strengthText.textContent = 'Strong password';
+    }
+}
+
+async function changePassword(newPassword) {
+    const resultDiv = document.getElementById('passwordChangeResult');
+    
+    try {
+        // Show loading
+        showPasswordResult('Changing password...', 'info');
+        
+        // Use query parameter as your route expects
+        const response = await apiRequest(`/auth/change-password?new_password=${encodeURIComponent(newPassword)}`, {
+            method: 'POST'
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            showPasswordResult('Password changed successfully!', 'success');
+            
+            // Clear form
+            document.getElementById('changePasswordForm').reset();
+            document.getElementById('passwordStrength').style.display = 'none';
+            
+            // Auto-hide success message after 3 seconds
+            setTimeout(() => {
+                resultDiv.style.display = 'none';
+            }, 3000);
+        } else {
+            const error = await response.json();
+            showPasswordResult('Failed to change password: ' + (error.detail || 'Unknown error'), 'error');
+        }
+    } catch (error) {
+        showPasswordResult('Error changing password: ' + error.message, 'error');
+    }
+}
+
+function showPasswordResult(message, type) {
+    const resultDiv = document.getElementById('passwordChangeResult');
+    
+    let className = '';
+    let icon = '';
+    
+    switch (type) {
+        case 'success':
+            className = 'alert alert-success';
+            icon = 'fas fa-check-circle';
+            break;
+        case 'error':
+            className = 'alert alert-danger';
+            icon = 'fas fa-exclamation-circle';
+            break;
+        case 'info':
+            className = 'alert alert-info';
+            icon = 'fas fa-info-circle';
+            break;
+        default:
+            className = 'alert alert-secondary';
+            icon = 'fas fa-info-circle';
+    }
+    
+    resultDiv.innerHTML = `
+        <div class="${className}" role="alert">
+            <i class="${icon} me-2"></i>${message}
+        </div>
+    `;
+    resultDiv.style.display = 'block';
 }
 
 function updateStatistics(implants) {
@@ -425,10 +672,8 @@ async function viewLastResult(token) {
             const result = await response.json();
             showResultModal(result);
         } else {
-            alert('Failed to load command result');
         }
     } catch (error) {
-        alert('Error loading result: ' + error.message);
     }
 }
 

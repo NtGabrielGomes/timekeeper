@@ -7,7 +7,7 @@ from ...crud.operator import get_operator_by_username
 from ...schemas.token import Token
 from ...schemas.operator import OperatorRead
 
-from ...security.security import verify_password, create_access_token
+from ...security.security import verify_password, create_access_token, hash_password
 
 router = APIRouter()
 
@@ -34,3 +34,20 @@ def read_current_operator(current_operator: CurrentOperatorDep):
         id=current_operator.id,
         username=current_operator.username,
     )
+
+@router.post("/change-password", response_model=None)
+def change_password(
+    new_password: str,
+    current_operator: CurrentOperatorDep,
+    db: SessionDep
+):
+    try:
+        current_operator.hashed_password = hash_password(new_password)
+        db.commit()
+        return {"detail": "success"}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to change password"
+        ) from e
