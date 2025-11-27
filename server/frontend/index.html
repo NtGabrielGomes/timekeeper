@@ -8,40 +8,43 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link href="styles.css" rel="stylesheet">
+    <!-- ...existing code... -->
+   <!-- filepath: e:\Coding\Malware\rust\timekeeper c2\server\frontend\index.html -->
+<!-- ...existing code... -->
     <style>
         :root {
-            /* Modern Color Palette */
-            --bg-primary: #0f0f23;
-            --bg-secondary: #1a1a2e;
-            --bg-tertiary: #16213e;
-            --bg-glass: rgba(26, 26, 46, 0.8);
-            --bg-card: rgba(22, 33, 62, 0.6);
+            /* Light Theme Color Palette */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-tertiary: #e9ecef;
+            --bg-glass: rgba(248, 249, 250, 0.9);
+            --bg-card: rgba(255, 255, 255, 0.95);
             
-            /* Accent Colors */
-            --accent-primary: #00d4ff;
-            --accent-secondary: #7c3aed;
-            --accent-tertiary: #06ffa5;
-            --accent-gradient: linear-gradient(135deg, #00d4ff 0%, #7c3aed 50%, #06ffa5 100%);
+            /* Accent Colors - Changed from blue to black */
+            --accent-primary: #000000;
+            --accent-secondary: #2c3e50;
+            --accent-tertiary: #198754;
+            --accent-gradient: linear-gradient(135deg, #000000 0%, #2c3e50 50%, #198754 100%);
             
             /* Status Colors */
-            --success: #06ffa5;
-            --warning: #fbbf24;
-            --error: #f87171;
-            --info: #60a5fa;
+            --success: #198754;
+            --warning: #fd7e14;
+            --error: #dc3545;
+            --info: #0dcaf0;
             
             /* Text Colors */
-            --text-primary: #ffffff;
-            --text-secondary: #94a3b8;
-            --text-muted: #64748b;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --text-muted: #adb5bd;
             
             /* Border & Shadow */
-            --border-primary: rgba(0, 212, 255, 0.2);
-            --border-secondary: rgba(124, 58, 237, 0.2);
-            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+            --border-primary: rgba(0, 0, 0, 0.3);
+            --border-secondary: rgba(44, 62, 80, 0.3);
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.2);
-            --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.3);
-            --shadow-glow: 0 0 20px rgba(0, 212, 255, 0.15);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.15);
+            --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.2);
+            --shadow-glow: 0 0 20px rgba(0, 0, 0, 0.1);
         }
 
         * {
@@ -51,9 +54,9 @@
         body {
             background: var(--bg-primary);
             background-image: 
-                radial-gradient(circle at 20% 50%, rgba(0, 212, 255, 0.05) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(124, 58, 237, 0.05) 0%, transparent 50%),
-                radial-gradient(circle at 40% 80%, rgba(6, 255, 165, 0.05) 0%, transparent 50%);
+                radial-gradient(circle at 20% 50%, rgba(0, 0, 0, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(44, 62, 80, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(25, 135, 84, 0.03) 0%, transparent 50%);
             color: var(--text-primary);
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             margin: 0;
@@ -62,7 +65,7 @@
             line-height: 1.6;
         }
 
-        /* Glassmorphism effect */
+        /* Glassmorphism effect - Removed border-radius */
         .glass {
             background: var(--bg-glass);
             backdrop-filter: blur(10px);
@@ -73,7 +76,8 @@
             background: var(--bg-card);
             backdrop-filter: blur(15px);
             border: 1px solid var(--border-primary);
-            border-radius: 16px;
+            border-radius: 0; /* Removed border-radius */
+            box-shadow: var(--shadow-lg);
         }
 
         /* Navigation */
@@ -83,6 +87,74 @@
             border-bottom: 1px solid var(--border-primary);
             box-shadow: var(--shadow-md);
             padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            background: var(--bg-card);
+            border-right: 1px solid var(--border-primary);
+            padding: 1.5rem 1rem;
+            overflow-y: auto;
+            position: sticky;
+            top: 0;
+            height: calc(100vh - 76px);
+        }
+
+        .sidebar-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .sidebar-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.75rem;
+            padding: 0 0.5rem;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 0.6rem 0.8rem;
+            margin-bottom: 0.3rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
+            font-size: 0.8rem;
+        }
+
+        .sidebar-item:hover {
+            background: rgba(0, 0, 0, 0.05);
+            border-color: var(--border-primary);
+            color: var(--accent-primary);
+        }
+
+        .sidebar-item.active {
+            background: rgba(0, 0, 0, 0.1);
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+            font-weight: 600;
+        }
+
+        .sidebar-item i {
+            margin-right: 0.6rem;
+            width: 14px;
+            font-size: 0.8rem;
+        }
+
+        /* Main Content Area */
+        .content-area {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            background: var(--bg-secondary);
         }
 
         .navbar-brand {
@@ -93,38 +165,45 @@
             letter-spacing: 2px;
         }
 
-        .navbar-brand::before {
-            content: "";
-            color: var(--accent-tertiary);
-        }
-
-        @keyframes pulse-glow {
-            0%, 100% { 
-                opacity: 1; 
-                filter: drop-shadow(0 0 5px var(--accent-tertiary));
-            }
-            50% { 
-                opacity: 0.6; 
-                filter: drop-shadow(0 0 10px var(--accent-tertiary));
-            }
-        }
-
         /* Main Container */
         .main-container {
-            padding: 2rem;
-            max-width: 1600px;
-            margin: 0 auto;
+            padding: 0;
+            max-width: none;
+            margin: 0;
+            display: flex;
+            min-height: calc(100vh - 76px);
         }
 
-        /* Section Headers */
+        /* Section Headers - Removed border-radius */
         .section-header {
             background: var(--bg-card);
             backdrop-filter: blur(15px);
             border: 1px solid var(--border-primary);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
+            border-radius: 0; /* Removed border-radius */
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
             box-shadow: var(--shadow-md);
+        }
+
+        .content-section {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .content-section-header {
+            background: var(--bg-tertiary);
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-primary);
+            font-weight: 600;
+            color: var(--accent-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.8rem;
+        }
+
+        .content-section-body {
+            padding: 1rem;
         }
 
         .section-header h3, .section-header h5 {
@@ -135,14 +214,6 @@
             letter-spacing: 1px;
         }
 
-        .section-header h3 {
-            font-size: 1.25rem;
-        }
-
-        .section-header h5 {
-            font-size: 0.875rem;
-        }
-
         /* Login Container */
         .login-container {
             display: flex;
@@ -150,13 +221,14 @@
             align-items: center;
             min-height: 100vh;
             padding: 2rem;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
         }
 
         .login-card {
             background: var(--bg-card);
             backdrop-filter: blur(20px);
             border: 1px solid var(--border-primary);
-            border-radius: 20px;
+            border-radius: 0; /* Removed border-radius */
             padding: 3rem;
             box-shadow: var(--shadow-xl);
             min-width: 450px;
@@ -174,71 +246,45 @@
             background: var(--accent-gradient);
         }
 
-        /* Statistics Cards */
-        .stats-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2.5rem;
+        /* Status Overview - Clean list style */
+        .status-overview-clean {
+            padding: 0.5rem;
         }
 
-        .stat-card {
-            background: var(--bg-card);
-            backdrop-filter: blur(15px);
-            border: 1px solid var(--border-primary);
-            border-radius: 16px;
-            padding: 2rem;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: var(--shadow-md);
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.4rem 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
         }
 
-        .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-xl), var(--shadow-glow);
-            border-color: var(--accent-primary);
+        .status-item:last-child {
+            border-bottom: none;
         }
 
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: var(--accent-gradient);
+        .status-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-weight: 500;
         }
 
-        .stat-card.online::before { background: var(--success); }
-        .stat-card.offline::before { background: var(--error); }
-        .stat-card.admin::before { background: var(--warning); }
-
-        .stat-value {
-            font-size: 2.5rem;
-            font-weight: 700;
+        .status-value {
+            font-size: 0.9rem;
+            font-weight: 600;
             color: var(--accent-primary);
-            margin: 0;
-            line-height: 1;
         }
 
-        .stat-card.online .stat-value { 
+        .status-value.status-online {
             color: var(--success);
         }
-        .stat-card.offline .stat-value { 
+
+        .status-value.status-offline {
             color: var(--error);
         }
-        .stat-card.admin .stat-value { 
-            color: var(--warning);
-        }
 
-        .stat-label {
-            color: var(--text-secondary);
-            margin-top: 0.75rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        .status-value.status-admin {
+            color: var(--warning);
         }
 
         .stat-icon {
@@ -246,16 +292,16 @@
             top: 1.5rem;
             right: 1.5rem;
             font-size: 1.5rem;
-            color: var(--accent-primary);
+            color: var(--text-muted);
             opacity: 0.3;
         }
 
-        /* Tables */
+        /* Tables - Removed border-radius */
         .implants-table {
             background: var(--bg-card);
             backdrop-filter: blur(15px);
             border: 1px solid var(--border-primary);
-            border-radius: 16px;
+            border-radius: 0; /* Removed border-radius */
             overflow: hidden;
             box-shadow: var(--shadow-lg);
         }
@@ -292,76 +338,36 @@
         }
 
         .table tbody tr:hover {
-            background: rgba(0, 212, 255, 0.05) !important;
+            background: rgba(0, 0, 0, 0.05) !important; /* Changed to black */
             transform: scale(1.01);
         }
 
         /* Status Colors */
         .status-online {
             color: var(--success);
-            text-shadow: 0 0 8px var(--success);
+            font-weight: 600;
         }
 
         .status-offline {
             color: var(--error);
-            text-shadow: 0 0 8px var(--error);
-        }
-
-        /* Buttons */
-        .btn-primary {
-            background: var(--accent-gradient);
-            border: none;
-            color: white;
             font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            padding: 0.75rem 1.5rem;
-            border-radius: 12px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: var(--shadow-md);
         }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg), var(--shadow-glow);
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, var(--error), #f87171);
-            border: none;
-            font-weight: 600;
-            border-radius: 8px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .btn-info {
-            background: linear-gradient(135deg, var(--info), #60a5fa);
-            border: none;
-            font-weight: 600;
-            border-radius: 8px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .btn-sm {
-            padding: 0.5rem 0.75rem;
-            font-size: 0.75rem;
-        }
-
-        /* Forms */
+        /* Forms - Removed border-radius */
         .form-control {
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--bg-secondary);
             border: 1px solid var(--border-primary);
             color: var(--text-primary);
-            border-radius: 12px;
+            border-radius: 0; /* Removed border-radius */
             padding: 0.875rem 1rem;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .form-control:focus {
-            background: rgba(255, 255, 255, 0.08);
+            background: var(--bg-primary);
             border-color: var(--accent-primary);
             color: var(--text-primary);
-            box-shadow: 0 0 0 0.2rem rgba(0, 212, 255, 0.25);
+            box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.25); /* Changed to black */
         }
 
         .form-label {
@@ -372,12 +378,12 @@
             font-size: 0.75rem;
         }
 
-        /* Modals */
+        /* Modals - Removed border-radius */
         .modal-content {
             background: var(--bg-card);
             backdrop-filter: blur(20px);
             border: 1px solid var(--border-primary);
-            border-radius: 16px;
+            border-radius: 0; /* Removed border-radius */
             box-shadow: var(--shadow-xl);
         }
 
@@ -398,222 +404,130 @@
             background: var(--bg-tertiary);
         }
 
-        /* Command Output */
-        .command-output {
-            background: #000;
-            border: 1px solid var(--accent-primary);
-            border-radius: 12px;
-            padding: 1.5rem;
-            font-family: 'JetBrains Mono', 'Consolas', monospace;
-            font-size: 0.875rem;
-            white-space: pre-wrap;
-            max-height: 400px;
-            overflow-y: auto;
-            color: var(--accent-tertiary);
-            text-shadow: 0 0 8px rgba(6, 255, 165, 0.3);
+        /* Terminal Styles */
+        .terminal-section {
+            margin-top: 0;
         }
 
-        /* Badges */
-        .badge {
-            font-size: 0.6875rem;
-            font-weight: 500;
-            padding: 0.375rem 0.75rem;
-            border-radius: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        .terminal-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .bg-success { 
-            background: linear-gradient(135deg, var(--success), #34d399) !important; 
-            color: #000 !important;
-        }
-        
-        .bg-danger { 
-            background: linear-gradient(135deg, var(--error), #f87171) !important; 
-            color: white !important;
-        }
-        
-        .bg-warning { 
-            background: linear-gradient(135deg, var(--warning), #fbbf24) !important; 
-            color: #000 !important;
-        }
-        
-        .bg-secondary { 
-            background: linear-gradient(135deg, var(--text-secondary), #64748b) !important; 
-            color: white !important;
-        }
-
-        /* Utilities */
-        .loading {
-            display: none;
-        }
-
-        .loading.show {
-            display: inline-block;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .navbar-text {
-            color: var(--text-primary) !important;
-            font-weight: 500;
-        }
-
-        .btn-outline-light {
-            border-color: var(--accent-primary);
-            color: var(--accent-primary);
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-radius: 8px;
+        .terminal-select {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            color: var(--text-primary);
+            padding: 0.4rem 0.6rem;
+            font-size: 0.75rem;
+            min-width: 180px;
+            font-family: 'JetBrains Mono', monospace;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .btn-outline-light:hover {
-            background: var(--accent-primary);
-            color: white;
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .alert-danger {
-            background: rgba(248, 113, 113, 0.1);
-            border: 1px solid var(--error);
-            color: var(--error);
-            border-radius: 12px;
-        }
-
-        .page-title {
-            font-weight: 600;
-            color: var(--accent-primary);
-            margin-bottom: 2rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 1.5rem;
         }
 
         .clean-button {
             background: var(--bg-tertiary);
             border: 1px solid var(--border-primary);
             color: var(--accent-primary);
-            padding: 0.75rem 1.25rem;
-            border-radius: 10px;
-            font-size: 0.875rem;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.7rem;
             font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            backdrop-filter: blur(10px);
+            transition: all 0.2s ease;
         }
 
         .clean-button:hover {
             background: var(--accent-primary);
             color: white;
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md), 0 0 20px rgba(0, 212, 255, 0.3);
-        }
-
-        /* Terminal Styles */
-        .terminal-section {
-            margin-top: 2.5rem;
-        }
-
-        .terminal-controls {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .terminal-select {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-primary);
-            color: var(--text-primary);
-            border-radius: 10px;
-            padding: 0.625rem 1rem;
-            font-size: 0.875rem;
-            min-width: 250px;
-            font-family: 'JetBrains Mono', monospace;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .terminal-select:focus {
             border-color: var(--accent-primary);
-            box-shadow: 0 0 0 0.2rem rgba(0, 212, 255, 0.25);
-            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.25); /* Changed to black */
+            background: var(--bg-primary);
         }
 
         .terminal-container {
-            background: var(--bg-card);
-            backdrop-filter: blur(20px);
+            background: #000000;
             border: 1px solid var(--border-primary);
-            border-radius: 16px;
             overflow: hidden;
-            box-shadow: var(--shadow-xl);
             font-family: 'JetBrains Mono', 'Consolas', monospace;
             height: 500px;
             display: flex;
             flex-direction: column;
+            position: relative;
+        }
+
+        .terminal-body {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            position: relative;
+            height: 100%;
+            min-height: 0;
         }
 
         .terminal-header {
-            background: var(--bg-tertiary);
-            border-bottom: 1px solid var(--border-primary);
-            padding: 1rem 1.5rem;
+            background: #1a1a1a;
+            border-bottom: 1px solid #333;
+            padding: 0.5rem 1rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            height: 60px;
+            height: 40px;
         }
 
         .terminal-status {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 0.75rem;
         }
 
         .status-connected {
-            color: var(--success);
+            color: #ffffff;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.4rem;
         }
 
         .status-connected::before {
             content: '';
-            width: 8px;
-            height: 8px;
-            background: var(--success);
+            width: 6px;
+            height: 6px;
+            background: #ffffff;
             border-radius: 50%;
             animation: pulse-dot 2s infinite;
-            box-shadow: 0 0 10px var(--success);
         }
 
         .status-disconnected {
-            color: var(--error);
+            color: #ffffff;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.4rem;
         }
 
         .status-disconnected::before {
             content: '';
-            width: 8px;
-            height: 8px;
-            background: var(--error);
+            width: 6px;
+            height: 6px;
+            background: #ffffff;
             border-radius: 50%;
-            box-shadow: 0 0 10px var(--error);
+        }
+
+        .terminal-target-info {
+            color: #888;
+            font-size: 0.65rem;
+            font-family: 'JetBrains Mono', monospace;
         }
 
         @keyframes pulse-dot {
@@ -628,87 +542,56 @@
         }
 
         .terminal-target-info {
-            color: var(--text-secondary);
-            font-size: 0.75rem;
+            color: #888;
+            font-size: 0.65rem;
             font-family: 'JetBrains Mono', monospace;
-        }
-
-        .terminal-buttons {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .terminal-button {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .terminal-button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 8px currentColor;
-        }
-
-        .terminal-button.close {
-            background: var(--error);
-        }
-
-        .terminal-button.minimize {
-            background: var(--warning);
-        }
-
-        .terminal-button.maximize {
-            background: var(--success);
-        }
-
-        .terminal-body {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
         }
 
         .terminal-output {
             flex: 1;
-            padding: 1.5rem;
+            padding: 0.75rem;
+            padding-bottom: 3rem;
             overflow-y: auto;
-            background: #000;
-            color: var(--accent-tertiary);
-            font-size: 0.875rem;
-            line-height: 1.5;
+            background: #000000;
+            color: #ffffff;
+            font-size: 0.8rem;
+            line-height: 1.4;
             white-space: pre-wrap;
             word-wrap: break-word;
+            border: none;
+            margin: 0;
+            scroll-behavior: smooth;
+            max-height: calc(100% - 50px);
         }
 
         .terminal-welcome {
-            color: var(--accent-primary);
+            color: #ffffff;
             font-weight: 600;
-            text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
         }
 
         .terminal-input-line {
             display: flex;
             align-items: center;
-            padding: 1rem 1.5rem;
-            background: var(--bg-tertiary);
-            border-top: 1px solid var(--border-primary);
+            padding: 0.5rem 0.75rem;
+            background: #000000;
+            border-top: 1px solid #333;
+            position: sticky;
+            bottom: 0;
+            z-index: 10;
         }
 
         .terminal-prompt {
-            color: var(--accent-primary);
+            color: #ffffff;
             font-weight: 700;
-            margin-right: 0.75rem;
-            font-size: 0.875rem;
-            text-shadow: 0 0 8px rgba(0, 212, 255, 0.3);
+            margin-right: 0.5rem;
+            font-size: 0.8rem;
         }
 
         .terminal-input {
             flex: 1;
             background: transparent;
             border: none;
-            color: var(--text-primary);
+            color: #ffffff;
             font-family: inherit;
             font-size: 0.875rem;
             outline: none;
@@ -723,7 +606,7 @@
         }
 
         .terminal-command {
-            color: var(--text-primary);
+            color: #ffffff;
         }
 
         .terminal-output-block {
@@ -731,46 +614,163 @@
         }
 
         .terminal-command-line {
-            color: var(--accent-primary);
+            color: #ffffff;
             font-weight: 600;
             margin-bottom: 0.5rem;
-            text-shadow: 0 0 8px rgba(0, 212, 255, 0.3);
         }
 
         .terminal-command-output {
-            color: var(--accent-tertiary);
+            color: #ffffff;
             margin-left: 1rem;
             white-space: pre-wrap;
-            text-shadow: 0 0 5px rgba(6, 255, 165, 0.2);
         }
 
         .terminal-error {
             color: var(--error);
-            text-shadow: 0 0 8px rgba(248, 113, 113, 0.3);
         }
 
         .terminal-warning {
             color: var(--warning);
-            text-shadow: 0 0 8px rgba(251, 191, 36, 0.3);
         }
 
         .terminal-info {
             color: var(--info);
-            text-shadow: 0 0 8px rgba(96, 165, 250, 0.3);
         }
 
-        /* Scrollbar Customization */
+        /* Command Output - Removed border-radius */
+        .command-output {
+            background: #000000;
+            border: 1px solid var(--border-primary);
+            border-radius: 0; /* Removed border-radius */
+            padding: 1.5rem;
+            font-family: 'JetBrains Mono', 'Consolas', monospace;
+            font-size: 0.875rem;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+            color: #ffffff;
+        }
+
+        /* Buttons - Removed border-radius */
+        .btn-primary {
+            background: var(--accent-gradient);
+            border: none;
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0; /* Removed border-radius */
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg), var(--shadow-glow);
+        }
+
+        .btn-outline-light {
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-radius: 0; /* Removed border-radius */
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-outline-light:hover {
+            background: var(--accent-primary);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .clean-button {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-primary);
+            color: var(--accent-primary);
+            padding: 0.75rem 1.25rem;
+            border-radius: 0; /* Removed border-radius */
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+        }
+
+        .clean-button:hover {
+            background: var(--accent-primary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md), 0 0 20px rgba(0, 0, 0, 0.2); /* Changed to black */
+        }
+
+        .page-title {
+            font-weight: 600;
+            color: var(--accent-primary);
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 1.5rem;
+        }
+
+        .navbar-text {
+            color: var(--text-primary) !important;
+            font-weight: 500;
+        }
+
+        .alert-danger {
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid var(--error);
+            color: var(--error);
+            border-radius: 0; /* Removed border-radius */
+        }
+
+        /* Badges - Removed border-radius */
+        .badge {
+            font-size: 0.6875rem;
+            font-weight: 500;
+            padding: 0.375rem 0.75rem;
+            border-radius: 0; /* Removed border-radius */
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .bg-success { 
+            background: var(--success) !important; 
+            color: white !important;
+        }
+        
+        .bg-danger { 
+            background: var(--error) !important; 
+            color: white !important;
+        }
+        
+        .bg-warning { 
+            background: var(--warning) !important; 
+            color: white !important;
+        }
+        
+        .bg-secondary { 
+            background: var(--text-secondary) !important; 
+            color: white !important;
+        }
+
+        /* Scrollbar Customization - Changed to black */
         ::-webkit-scrollbar {
             width: 8px;
         }
 
         ::-webkit-scrollbar-track {
-            background: var(--bg-primary);
+            background: var(--bg-secondary);
         }
 
         ::-webkit-scrollbar-thumb {
-            background: var(--accent-primary);
-            border-radius: 4px;
+            background: var(--accent-primary); /* Now black */
+            border-radius: 0; /* Removed border-radius */
         }
 
         ::-webkit-scrollbar-thumb:hover {
@@ -782,677 +782,202 @@
         }
 
         .terminal-output::-webkit-scrollbar-track {
-            background: #000;
+            background: var(--bg-secondary);
         }
 
         .terminal-output::-webkit-scrollbar-thumb {
-            background: var(--accent-primary);
-            border-radius: 3px;
+            background: var(--accent-primary); /* Now black */
+            border-radius: 0; /* Removed border-radius */
         }
 
         /* Responsive Design */
         @media (max-width: 768px) {
             .main-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+                border-right: none;
+                border-bottom: 1px solid var(--border-primary);
                 padding: 1rem;
             }
 
-            .stats-container {
-                grid-template-columns: 1fr;
+            .content-area {
+                padding: 1rem;
             }
 
             .terminal-container {
-                height: 400px;
+                height: 300px;
             }
 
             .terminal-controls {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 0.75rem;
+                flex-wrap: wrap;
+                gap: 0.3rem;
             }
 
             .terminal-select {
                 min-width: auto;
+                flex: 1;
             }
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
+        /* Dashboard Styles */
+        .stats-card {
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--border-primary);
         }
 
-        .main-container {
-            padding: 30px;
-            max-width: 1600px;
-            margin: 0 auto;
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
         }
 
-        .section-header {
-            border-bottom: 2px solid var(--accent-red);
-            padding-bottom: 15px;
-            margin-bottom: 25px;
-            background: linear-gradient(90deg, var(--bg-tertiary) 0%, transparent 100%);
-            padding: 15px 20px;
-            border-radius: 4px;
+        .stats-card.online {
+            border-left: 4px solid var(--success);
         }
 
-        .section-header h3 {
-            margin: 0;
-            font-weight: 700;
-            color: var(--accent-red);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 1.4rem;
+        .stats-card.offline {
+            border-left: 4px solid var(--error);
         }
 
-        .section-header h5 {
-            margin: 0;
-            font-weight: 600;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .stats-card.admin {
+            border-left: 4px solid var(--warning);
         }
 
-        .login-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, var(--bg-primary) 0%, #1a1a1a 100%);
+        .stats-card .stats-icon {
+            float: left;
+            margin-right: 1rem;
+            font-size: 2.5rem;
+            color: var(--accent-primary);
+            opacity: 0.8;
         }
 
-        .login-card {
-            background: var(--bg-secondary);
-            border: 2px solid var(--accent-red);
-            border-radius: 8px;
-            padding: 50px;
-            box-shadow: var(--shadow);
-            min-width: 450px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .login-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--accent-red), var(--accent-orange), var(--accent-red));
-            animation: glow 2s ease-in-out infinite alternate;
-        }
-
-        @keyframes glow {
-            from { box-shadow: 0 0 10px var(--accent-red); }
-            to { box-shadow: 0 0 20px var(--accent-orange); }
-        }
-
-        .map-container {
-            background-color: var(--secondary-color);
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            padding: 10px;
-            margin-bottom: 30px;
-            height: 320px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        #worldMap {
-            width: 100%;
-            height: 100%;
-            border-radius: 4px;
-        }
-
-        .gm-style {
-            border-radius: 4px;
-        }
-
-        .implant-marker {
-            background-color: #dc3545;
-            border: 2px solid #ffffff;
-            border-radius: 50%;
-            width: 12px;
-            height: 12px;
-            animation: pulse 2s infinite;
-        }
-
-        .implant-marker.offline {
-            background-color: #6c757d;
-            animation: none;
-        }
-
-        .stats-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-        }
-
-        .stat-card {
-            background: var(--bg-secondary);
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            padding: 25px;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .stat-card:hover {
-            border-color: var(--accent-red);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow);
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: var(--accent-red);
-        }
-
-        .stat-card.online::before { background: var(--success-color); }
-        .stat-card.offline::before { background: var(--danger-color); }
-        .stat-card.admin::before { background: var(--warning-color); }
-
-        .stat-value {
-            font-size: 3rem;
-            font-weight: 900;
-            color: var(--accent-red);
-            margin: 0;
-            text-shadow: 0 0 10px rgba(255, 71, 87, 0.3);
-        }
-
-        .stat-card.online .stat-value { color: var(--success-color); }
-        .stat-card.offline .stat-value { color: var(--danger-color); }
-        .stat-card.admin .stat-value { color: var(--warning-color); }
-
-        .stat-label {
-            color: var(--text-secondary);
-            margin-top: 10px;
-            font-size: 1rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .stat-icon {
-            position: absolute;
-            top: 20px;
-            right: 20px;
+        .stats-card .stats-info h3 {
             font-size: 2rem;
-            color: var(--border-color);
-            opacity: 0.3;
-        }
-
-        .implants-table {
-            background: var(--bg-secondary);
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-        }
-
-        .table {
-            color: var(--text-primary);
-            margin-bottom: 0;
-            font-size: 0.85rem;
-            background: transparent;
-        }
-
-        .table th {
-            background: var(--bg-tertiary);
-            color: var(--accent-red);
-            border: none;
             font-weight: 700;
-            font-size: 0.8rem;
-            padding: 15px 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border-bottom: 2px solid var(--accent-red);
+            color: var(--accent-primary);
+            margin-bottom: 0.25rem;
         }
 
-        .table td {
-            border-color: var(--border-color);
-            vertical-align: middle;
-            font-size: 0.85rem;
-            padding: 12px;
-            background: var(--bg-secondary);
-        }
-
-        .table tbody tr {
-            transition: all 0.2s ease;
-        }
-
-        .table tbody tr:hover {
-            background: var(--bg-tertiary) !important;
-            transform: scale(1.01);
-        }
-
-        .status-online {
-            color: var(--success-color);
-            text-shadow: 0 0 5px var(--success-color);
-        }
-
-        .status-offline {
-            color: var(--danger-color);
-            text-shadow: 0 0 5px var(--danger-color);
-        }
-
-        .btn-primary {
-            background: linear-gradient(45deg, var(--accent-red), var(--accent-orange));
-            border: none;
-            color: white;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            padding: 12px 25px;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(255, 71, 87, 0.3);
-        }
-
-        .btn-danger {
-            background: var(--danger-color);
-            border: none;
-            font-weight: 600;
-            border-radius: 6px;
-        }
-
-        .btn-info {
-            background: var(--accent-orange);
-            border: none;
-            font-weight: 600;
-            border-radius: 6px;
-        }
-
-        .btn-sm {
-            padding: 6px 12px;
-            font-size: 0.75rem;
-        }
-
-        .form-control {
-            background: var(--bg-tertiary);
-            border: 2px solid var(--border-color);
-            color: var(--text-primary);
-            border-radius: 6px;
-            padding: 12px 15px;
-        }
-
-        .form-control:focus {
-            background: var(--bg-tertiary);
-            border-color: var(--accent-red);
-            color: var(--text-primary);
-            box-shadow: 0 0 0 0.2rem rgba(255, 71, 87, 0.25);
-        }
-
-        .form-label {
+        .stats-card .stats-info p {
+            font-size: 0.875rem;
             color: var(--text-secondary);
+            margin-bottom: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             font-weight: 600;
+        }
+
+        .chart-container {
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-primary);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-primary);
+        }
+
+        .chart-header h5 {
+            font-weight: 600;
+            color: var(--accent-primary);
+            margin-bottom: 0;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 0.85rem;
+            letter-spacing: 0.5px;
         }
 
-        .modal-content {
-            background: var(--bg-secondary);
-            border: 2px solid var(--accent-red);
-            border-radius: 8px;
-            box-shadow: var(--shadow);
+        .chart-body {
+            position: relative;
+            height: 300px;
         }
 
-        .modal-header {
-            border-bottom: 2px solid var(--accent-red);
-            background: var(--bg-tertiary);
+        .chart-body canvas {
+            max-height: 100%;
         }
 
-        .modal-title {
-            color: var(--accent-red);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .activity-container {
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-primary);
         }
 
-        .modal-footer {
-            border-top: 2px solid var(--border-color);
-            background: var(--bg-tertiary);
-        }
-
-        .command-output {
-            background: #000;
-            border: 2px solid var(--accent-red);
-            border-radius: 6px;
-            padding: 20px;
-            font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 0.9rem;
-            white-space: pre-wrap;
+        .activity-body {
             max-height: 400px;
             overflow-y: auto;
-            color: var(--success-color);
-            text-shadow: 0 0 5px var(--success-color);
         }
 
-        .badge {
-            font-size: 0.7rem;
-            font-weight: 600;
-            padding: 6px 10px;
-            border-radius: 4px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .bg-success { 
-            background: var(--success-color) !important; 
-            color: black !important;
-        }
-        
-        .bg-danger { 
-            background: var(--danger-color) !important; 
-            color: white !important;
-        }
-        
-        .bg-warning { 
-            background: var(--warning-color) !important; 
-            color: black !important;
-        }
-        
-        .bg-secondary { 
-            background: var(--text-secondary) !important; 
-            color: white !important;
-        }
-
-        .loading {
-            display: none;
-        }
-
-        .loading.show {
-            display: inline-block;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .navbar-text {
-            color: var(--text-primary) !important;
-            font-weight: 600;
-        }
-
-        .btn-outline-light {
-            border-color: var(--accent-red);
-            color: var(--accent-red);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .btn-outline-light:hover {
-            background: var(--accent-red);
-            color: white;
-        }
-
-        .alert-danger {
-            background: rgba(255, 71, 87, 0.1);
-            border: 2px solid var(--danger-color);
-            color: var(--danger-color);
-            border-radius: 6px;
-        }
-
-        .page-title {
-            font-weight: 700;
-            color: var(--accent-red);
-            margin-bottom: 30px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-size: 2rem;
-        }
-
-        .clean-button {
-            background: var(--bg-tertiary);
-            border: 2px solid var(--accent-red);
-            color: var(--accent-red);
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
-        }
-
-        .clean-button:hover {
-            background: var(--accent-red);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(255, 71, 87, 0.3);
-        }
-
-        /* Scrollbar customization */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--bg-primary);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--accent-red);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--accent-orange);
-        }
-
-        /* Terminal Styles */
-        .terminal-section {
-            margin-top: 40px;
-        }
-
-        .terminal-controls {
+        .activity-item {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-primary);
         }
 
-        .terminal-select {
-            background: var(--bg-tertiary);
-            border: 2px solid var(--border-color);
-            color: var(--text-primary);
-            border-radius: 6px;
-            padding: 8px 12px;
-            font-size: 0.85rem;
-            min-width: 200px;
+        .activity-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
         }
 
-        .terminal-select:focus {
-            border-color: var(--accent-red);
-            box-shadow: 0 0 0 0.2rem rgba(255, 71, 87, 0.25);
-        }
-
-        .terminal-container {
-            background: var(--bg-secondary);
-            border: 2px solid var(--accent-red);
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            height: 400px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .terminal-header {
-            background: var(--bg-tertiary);
-            padding: 10px 15px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 40px;
-        }
-
-        .terminal-status {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .status-connected {
-            color: var(--success-color);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 0.8rem;
-        }
-
-        .status-disconnected {
-            color: var(--danger-color);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 0.8rem;
-        }
-
-        .terminal-target-info {
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-        }
-
-        .terminal-buttons {
-            display: flex;
-            gap: 8px;
-        }
-
-        .terminal-button {
-            width: 12px;
-            height: 12px;
+        .activity-dot {
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
-            cursor: pointer;
+            margin-right: 0.75rem;
+            margin-top: 0.25rem;
+            flex-shrink: 0;
         }
 
-        .terminal-button.close {
-            background: var(--danger-color);
+        .activity-dot.online {
+            background: var(--success);
         }
 
-        .terminal-button.minimize {
-            background: var(--warning-color);
+        .activity-dot.offline {
+            background: var(--error);
         }
 
-        .terminal-button.maximize {
-            background: var(--success-color);
+        .activity-dot.warning {
+            background: var(--warning);
         }
 
-        .terminal-body {
+        .activity-content {
             flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
         }
 
-        .terminal-output {
-            flex: 1;
-            padding: 15px;
-            overflow-y: auto;
-            background: #000;
-            color: var(--success-color);
-            font-size: 0.85rem;
-            line-height: 1.4;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-
-        .terminal-welcome {
-            color: var(--accent-red);
-            font-weight: 600;
-        }
-
-        .terminal-input-line {
-            display: flex;
-            align-items: center;
-            padding: 10px 15px;
-            background: var(--bg-tertiary);
-            border-top: 1px solid var(--border-color);
-        }
-
-        .terminal-prompt {
-            color: var(--accent-red);
-            font-weight: 700;
-            margin-right: 8px;
-            font-size: 0.9rem;
-        }
-
-        .terminal-input {
-            flex: 1;
-            background: transparent;
-            border: none;
+        .activity-text {
+            font-size: 0.875rem;
             color: var(--text-primary);
-            font-family: inherit;
-            font-size: 0.85rem;
-            outline: none;
+            margin-bottom: 0.25rem;
         }
 
-        .terminal-input:disabled {
-            color: var(--text-muted);
-        }
-
-        .terminal-command {
-            color: var(--text-primary);
-        }
-
-        .terminal-output-block {
-            margin-bottom: 10px;
-        }
-
-        .terminal-command-line {
-            color: var(--accent-red);
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .terminal-command-output {
-            color: var(--success-color);
-            margin-left: 10px;
-            white-space: pre-wrap;
-        }
-
-        .terminal-error {
-            color: var(--danger-color);
-        }
-
-        .terminal-warning {
-            color: var(--warning-color);
-        }
-
-        .terminal-info {
+        .activity-time {
+            font-size: 0.75rem;
             color: var(--text-secondary);
         }
 
-        /* Scrollbar for terminal */
-        .terminal-output::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .terminal-output::-webkit-scrollbar-track {
-            background: #000;
-        }
-
-        .terminal-output::-webkit-scrollbar-thumb {
-            background: var(--accent-red);
-            border-radius: 3px;
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.6;
+                transform: scale(1.1);
+            }
         }
     </style>
+<!-- ...existing code... -->
+<!-- ...existing code... -->
 </head>
 <body>
     <!-- Login Screen -->
@@ -1502,109 +1027,250 @@
 
         <!-- Main Content -->
         <div class="main-container">
-            <!-- Statistics Cards -->
-            <div class="section-header">
-                <h5>System Status</h5>
-            </div>
-            <div class="stats-container">
-                <div class="stat-card">
-                    <i class="fas fa-server stat-icon"></i>
-                    <div class="stat-value" id="totalImplants">0</div>
-                    <div class="stat-label">Total Compromised</div>
-                </div>
-                <div class="stat-card online">
-                    <i class="fas fa-signal stat-icon"></i>
-                    <div class="stat-value" id="onlineImplants">0</div>
-                    <div class="stat-label">Active Sessions</div>
-                </div>
-                <div class="stat-card offline">
-                    <i class="fas fa-power-off stat-icon"></i>
-                    <div class="stat-value" id="offlineImplants">0</div>
-                    <div class="stat-label">Inactive</div>
-                </div>
-                <div class="stat-card admin">
-                    <i class="fas fa-crown stat-icon"></i>
-                    <div class="stat-value" id="adminImplants">0</div>
-                    <div class="stat-label">Privileged</div>
-                </div>
-            </div>
-
-            <!-- Controls -->
-            <div class="section-header">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h3 class="page-title mb-0">Active Targets</h3>
-                    <button class="clean-button" onclick="refreshImplants()">
-                        <i class="fas fa-sync-alt loading" id="refreshIcon"></i> Refresh Arsenal
-                    </button>
-                </div>
-            </div>
-
-            <!-- Implants Table -->
-            <div class="implants-table">
-                <table class="table table-dark table-hover">
-                    <thead>
-                        <tr>
-                            <th>Status</th>
-                            <th>Hostname</th>
-                            <th>Username</th>
-                            <th>IP Address</th>
-                            <th>OS</th>
-                            <th>Location</th>
-                            <th>Admin</th>
-                            <th>Last Seen</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="implantsTableBody">
-                        <!-- Implants will be loaded here -->
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Interactive Terminal -->
-            <div class="terminal-section">
-                <div class="section-header">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h3 class="page-title mb-0">Interactive Terminal</h3>
-                        <div class="terminal-controls">
-                            <select id="targetSelect" class="form-select terminal-select">
-                                <option value="">Select Target...</option>
-                            </select>
-                            <button class="clean-button ms-2" onclick="testConnection()">
-                                <i class="fas fa-plug"></i> Test
-                            </button>
-                            <button class="clean-button ms-2" onclick="clearTerminal()">
-                                <i class="fas fa-trash"></i> Clear
-                            </button>
-                        </div>
-                    </div>
+            <!-- Sidebar Navigation -->
+            <div class="sidebar">
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Navigation</div>
+                    <a href="#" class="sidebar-item active" id="navDashboard">
+                        Dashboard
+                    </a>
+                    <a href="#" class="sidebar-item" id="navTargets">
+                        Active Targets
+                    </a>
+                    <a href="#" class="sidebar-item" id="navTerminal">
+                        Terminal
+                    </a>
                 </div>
                 
-                <div class="terminal-container">
-                    <div class="terminal-header">
-                        <div class="terminal-status">
-                            <span id="terminalStatus" class="status-disconnected">DISCONNECTED</span>
-                            <span id="terminalTarget" class="terminal-target-info"></span>
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Tools</div>
+                    <a href="#" class="sidebar-item" onclick="refreshImplants()">
+                        Refresh Arsenal
+                    </a>
+                    <a href="#" class="sidebar-item" onclick="showSettings()">
+                        Settings
+                    </a>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Status Overview</div>
+                    <div class="status-overview-clean">
+                        <div class="status-item">
+                            <span class="status-label">Total:</span>
+                            <span class="status-value" id="totalImplants">0</span>
                         </div>
-                        <div class="terminal-buttons">
-                            <div class="terminal-button close"></div>
-                            <div class="terminal-button minimize"></div>
-                            <div class="terminal-button maximize"></div>
+                        <div class="status-item">
+                            <span class="status-label">Online:</span>
+                            <span class="status-value status-online" id="onlineImplants">0</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">Offline:</span>
+                            <span class="status-value status-offline" id="offlineImplants">0</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="status-label">Admin:</span>
+                            <span class="status-value status-admin" id="adminImplants">0</span>
                         </div>
                     </div>
-                    
-                    <div class="terminal-body">
-                        <div id="terminalOutput" class="terminal-output">
-                            <div class="terminal-welcome">
-                                TimeKeeper C2 Interactive Terminal v1.0<br>
-                                Type 'help' for available commands<br>
-                                Select a target to begin...<br><br>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="content-area">
+                <!-- Dashboard Section -->
+                <div class="content-section" id="dashboardSection" style="display: block;">
+                    <div class="content-section-header">
+                        Command & Control Dashboard
+                    </div>
+                    <div class="content-section-body">
+                        <!-- Stats Cards Row -->
+                        <div class="row mb-4">
+                            <div class="col-md-3">
+                                <div class="stats-card glass-card">
+                                    <div class="stats-icon">
+                                    </div>
+                                    <div class="stats-info">
+                                        <h3 id="statTotal">0</h3>
+                                        <p>Total Implants</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stats-card glass-card online">
+                                    <div class="stats-icon">
+                                    </div>
+                                    <div class="stats-info">
+                                        <h3 id="statOnline">0</h3>
+                                        <p>Online Now</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stats-card glass-card offline">
+                                    <div class="stats-icon">
+                                    </div>
+                                    <div class="stats-info">
+                                        <h3 id="statOffline">0</h3>
+                                        <p>Offline</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stats-card glass-card admin">
+                                    <div class="stats-icon">
+                                    </div>
+                                    <div class="stats-info">
+                                        <h3 id="statAdmin">0</h3>
+                                        <p>Admin Privileges</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        
-                        <div class="terminal-input-line">
-                            <span id="terminalPrompt" class="terminal-prompt">beacon&gt;</span>
-                            <input type="text" id="terminalInput" class="terminal-input" placeholder="Enter command..." disabled>
+
+                        <!-- Charts Row -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="chart-container glass-card">
+                                    <div class="chart-header">
+                                        <h5>Status Distribution</h5>
+                                    </div>
+                                    <div class="chart-body">
+                                        <canvas id="statsPieChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="chart-container glass-card">
+                                    <div class="chart-header">
+                                        <h5>Top Countries</h5>
+                                    </div>
+                                    <div class="chart-body">
+                                        <canvas id="countriesChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- World Map & Activity Row -->
+                        <div class="row mb-4">
+                            <div class="col-md-12">
+                                <div class="activity-container glass-card">
+                                    <div class="chart-header">
+                                        <h5>Recent Activity</h5>
+                                    </div>
+                                    <div class="activity-body">
+                                        <div id="activityFeed">
+                                            <div class="activity-item">
+                                                <div class="activity-dot online"></div>
+                                                <div class="activity-content">
+                                                    <div class="activity-text">Waiting for connections...</div>
+                                                    <div class="activity-time">Just now</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Operating Systems & Privileges Row -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="chart-container glass-card">
+                                    <div class="chart-header">
+                                        <h5>Operating Systems</h5>
+                                    </div>
+                                    <div class="chart-body">
+                                        <canvas id="osChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="chart-container glass-card">
+                                    <div class="chart-header">
+                                        <h5>Connection Timeline</h5>
+                                    </div>
+                                    <div class="chart-body">
+                                        <canvas id="timelineChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Active Targets Section -->
+                <div class="content-section" id="targetsSection" style="display: none;">
+                    <div class="content-section-header">
+                        Active Targets Management
+                    </div>
+                    <div class="content-section-body">
+                        <!-- Implants Table -->
+                        <div class="implants-table">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Status</th>
+                                        <th>Hostname</th>
+                                        <th>Username</th>
+                                        <th>IP Address</th>
+                                        <th>OS</th>
+                                        <th>Location</th>
+                                        <th>Admin</th>
+                                        <th>Last Seen</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="implantsTableBody">
+                                    <!-- Implants will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Terminal Section -->
+                <div class="content-section terminal-section" id="terminalSection" style="display: none;">
+                    <div class="content-section-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>
+                                Interactive Terminal
+                            </span>
+                            <div class="terminal-controls">
+                                <select id="targetSelect" class="form-select terminal-select">
+                                    <option value="">Select Target...</option>
+                                </select>
+                                <button class="clean-button ms-2" onclick="testConnection()">
+                                    Test
+                                </button>
+                                <button class="clean-button ms-2" onclick="clearTerminal()">
+                                    Clear
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content-section-body">
+                        <div class="terminal-container">
+                            <div class="terminal-header">
+                                <div class="terminal-status">
+                                    <span id="terminalStatus" class="status-disconnected">DISCONNECTED</span>
+                                    <span id="terminalTarget" class="terminal-target-info"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="terminal-body">
+                                <div id="terminalOutput" class="terminal-output">
+                                    <div class="terminal-welcome">
+                                        TimeKeeper<br>
+                                        Type 'help' for available commands<br>
+                                        Select a target to begin...<br><br>
+                                    </div>
+                                </div>
+                                
+                                <div class="terminal-input-line">
+                                    <span id="terminalPrompt" class="terminal-prompt">beacon&gt;</span>
+                                    <input type="text" id="terminalInput" class="terminal-input" placeholder="Enter command..." disabled>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1685,6 +1351,515 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+    // Alternância de seções pela sidebar
+    document.addEventListener('DOMContentLoaded', function() {
+        const navDashboard = document.getElementById('navDashboard');
+        const navTargets = document.getElementById('navTargets');
+        const navTerminal = document.getElementById('navTerminal');
+        const dashboardSection = document.getElementById('dashboardSection');
+        const targetsSection = document.getElementById('targetsSection');
+        const terminalSection = document.getElementById('terminalSection');
+
+        // Dashboard charts
+        let statsChart = null;
+        let countriesChart = null;
+        let osChart = null;
+        let timelineChart = null;
+        
+        // Dashboard data
+        let dashboardData = {
+            countries: {},
+            operatingSystems: {},
+            connectionHistory: []
+        };
+
+        function updateDashboardStats() {
+            const total = parseInt(document.getElementById('totalImplants').textContent) || 0;
+            const online = parseInt(document.getElementById('onlineImplants').textContent) || 0;
+            const offline = parseInt(document.getElementById('offlineImplants').textContent) || 0;
+            const admin = parseInt(document.getElementById('adminImplants').textContent) || 0;
+
+            document.getElementById('statTotal').textContent = total;
+            document.getElementById('statOnline').textContent = online;
+            document.getElementById('statOffline').textContent = offline;
+            document.getElementById('statAdmin').textContent = admin;
+
+            updateCharts(total, online, offline, admin);
+        }
+
+        function updateCharts(total, online, offline, admin) {
+            // Status Pie Chart - Enhanced design
+            const pieCtx = document.getElementById('statsPieChart').getContext('2d');
+            
+            // Create gradient colors
+            const onlineGradient = pieCtx.createLinearGradient(0, 0, 0, 400);
+            onlineGradient.addColorStop(0, 'rgba(25, 135, 84, 1)');
+            onlineGradient.addColorStop(1, 'rgba(25, 135, 84, 0.6)');
+            
+            const offlineGradient = pieCtx.createLinearGradient(0, 0, 0, 400);
+            offlineGradient.addColorStop(0, 'rgba(220, 53, 69, 1)');
+            offlineGradient.addColorStop(1, 'rgba(220, 53, 69, 0.6)');
+            
+            // Add admin data to the chart if there are admin users
+            const chartData = admin > 0 ? [online, offline, admin] : [online, offline];
+            const chartLabels = admin > 0 ? ['Online', 'Offline', 'Admin'] : ['Online', 'Offline'];
+            
+            const adminGradient = pieCtx.createLinearGradient(0, 0, 0, 400);
+            adminGradient.addColorStop(0, 'rgba(253, 126, 20, 1)');
+            adminGradient.addColorStop(1, 'rgba(253, 126, 20, 0.6)');
+            
+            const backgroundColors = admin > 0 ? 
+                [onlineGradient, offlineGradient, adminGradient] : 
+                [onlineGradient, offlineGradient];
+                
+            const borderColors = admin > 0 ? 
+                ['rgba(25, 135, 84, 1)', 'rgba(220, 53, 69, 1)', 'rgba(253, 126, 20, 1)'] : 
+                ['rgba(25, 135, 84, 1)', 'rgba(220, 53, 69, 1)'];
+            
+            const pieData = {
+                labels: chartLabels,
+                datasets: [{
+                    data: chartData,
+                    backgroundColor: backgroundColors,
+                    borderColor: borderColors,
+                    borderWidth: 3,
+                    hoverBorderWidth: 5,
+                    hoverBorderColor: '#ffffff',
+                    hoverOffset: 15,
+                    borderAlign: 'inner'
+                }]
+            };
+            
+            if (statsChart) {
+                statsChart.data = pieData;
+                statsChart.update('active');
+            } else {
+                statsChart = new Chart(pieCtx, {
+                    type: 'doughnut',
+                    data: pieData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '60%',
+                        radius: '90%',
+                        animation: {
+                            animateRotate: true,
+                            animateScale: true,
+                            duration: 1500,
+                            easing: 'easeOutQuart'
+                        },
+                        interaction: {
+                            intersect: false,
+                            mode: 'point'
+                        },
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'bottom',
+                                align: 'center',
+                                labels: {
+                                    color: 'var(--text-primary)',
+                                    font: {
+                                        size: 13,
+                                        weight: '600',
+                                        family: 'Inter, sans-serif'
+                                    },
+                                    padding: 20,
+                                    usePointStyle: true,
+                                    pointStyle: 'circle',
+                                    generateLabels: function(chart) {
+                                        const data = chart.data;
+                                        if (data.labels.length && data.datasets.length) {
+                                            return data.labels.map((label, i) => {
+                                                const dataset = data.datasets[0];
+                                                const value = dataset.data[i];
+                                                const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                                return {
+                                                    text: `${label}: ${value} (${percentage}%)`,
+                                                    fillStyle: dataset.backgroundColor[i],
+                                                    strokeStyle: dataset.borderColor[i],
+                                                    lineWidth: 2,
+                                                    pointStyle: 'circle',
+                                                    hidden: false,
+                                                    index: i
+                                                };
+                                            });
+                                        }
+                                        return [];
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                enabled: true,
+                                backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                                titleColor: '#ffffff',
+                                bodyColor: '#ffffff',
+                                borderColor: 'rgba(255, 255, 255, 0.2)',
+                                borderWidth: 1,
+                                cornerRadius: 8,
+                                displayColors: true,
+                                callbacks: {
+                                    label: function(context) {
+                                        const label = context.label || '';
+                                        const value = context.parsed;
+                                        const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                        return `${label}: ${value} targets (${percentage}%)`;
+                                    }
+                                }
+                            }
+                        },
+                        elements: {
+                            arc: {
+                                borderJoinStyle: 'round'
+                            }
+                        }
+                    },
+                    plugins: [{
+                        id: 'centerText',
+                        beforeDraw: function(chart) {
+                            if (total > 0) {
+                                const ctx = chart.ctx;
+                                ctx.restore();
+                                const fontSize = (chart.height / 150).toFixed(2);
+                                ctx.font = `bold ${fontSize}em Inter, sans-serif`;
+                                ctx.fillStyle = 'var(--accent-primary)';
+                                ctx.textAlign = 'center';
+                                ctx.textBaseline = 'middle';
+                                
+                                const centerX = chart.chartArea.left + (chart.chartArea.right - chart.chartArea.left) / 2;
+                                const centerY = chart.chartArea.top + (chart.chartArea.bottom - chart.chartArea.top) / 2;
+                                
+                                ctx.fillText(total, centerX, centerY - 10);
+                                
+                                ctx.font = `${fontSize * 0.5}em Inter, sans-serif`;
+                                ctx.fillStyle = 'var(--text-secondary)';
+                                ctx.fillText('Total Targets', centerX, centerY + 15);
+                                ctx.save();
+                            }
+                        }
+                    }]
+                });
+            }
+
+            // Countries Chart
+            updateCountriesChart();
+            
+            // OS Chart
+            updateOSChart();
+            
+            // Timeline Chart
+            updateTimelineChart();
+        }
+
+        function updateCountriesChart() {
+            const ctx = document.getElementById('countriesChart').getContext('2d');
+            const countryData = Object.entries(dashboardData.countries).slice(0, 5);
+            
+            if (countriesChart) {
+                countriesChart.destroy();
+            }
+            
+            // Cores vibrantes para cada país
+            const colors = [
+                'rgba(25, 135, 84, 0.8)',   // Verde
+                'rgba(220, 53, 69, 0.8)',   // Vermelho
+                'rgba(253, 126, 20, 0.8)',  // Laranja
+                'rgba(13, 202, 240, 0.8)',  // Azul ciano
+                'rgba(111, 66, 193, 0.8)'   // Roxo
+            ];
+            
+            const borderColors = [
+                'rgba(25, 135, 84, 1)',
+                'rgba(220, 53, 69, 1)',
+                'rgba(253, 126, 20, 1)',
+                'rgba(13, 202, 240, 1)',
+                'rgba(111, 66, 193, 1)'
+            ];
+            
+            countriesChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: countryData.map(([country, _]) => country),
+                    datasets: [{
+                        label: 'Infections',
+                        data: countryData.map(([_, count]) => count),
+                        backgroundColor: colors.slice(0, countryData.length),
+                        borderColor: borderColors.slice(0, countryData.length),
+                        borderWidth: 2,
+                        hoverBackgroundColor: colors.map(color => color.replace('0.8', '1')),
+                        hoverBorderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: 'var(--text-secondary)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: 'var(--text-secondary)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateOSChart() {
+            const ctx = document.getElementById('osChart').getContext('2d');
+            const osData = Object.entries(dashboardData.operatingSystems);
+            
+            if (osChart) {
+                osChart.destroy();
+            }
+            
+            osChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: osData.map(([os, _]) => os),
+                    datasets: [{
+                        data: osData.map(([_, count]) => count),
+                        backgroundColor: [
+                            'rgba(0, 123, 255, 0.8)',
+                            'rgba(40, 167, 69, 0.8)',
+                            'rgba(255, 193, 7, 0.8)',
+                            'rgba(220, 53, 69, 0.8)',
+                            'rgba(108, 117, 125, 0.8)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: 'var(--text-primary)',
+                                font: {
+                                    size: 10
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateTimelineChart() {
+            const ctx = document.getElementById('timelineChart').getContext('2d');
+            const last24Hours = [];
+            const now = new Date();
+            
+            // Criar array das últimas 24 horas com contagem zero inicial
+            for (let i = 23; i >= 0; i--) {
+                const hour = new Date(now.getTime() - i * 60 * 60 * 1000);
+                last24Hours.push({
+                    time: hour.getHours() + ':00',
+                    connections: 0,
+                    hourStart: new Date(hour.getFullYear(), hour.getMonth(), hour.getDate(), hour.getHours()),
+                    hourEnd: new Date(hour.getFullYear(), hour.getMonth(), hour.getDate(), hour.getHours() + 1)
+                });
+            }
+            
+            // Contar conexões reais dos implants baseado em last_seen
+            if (window.lastImplantsData && window.lastImplantsData.length > 0) {
+                window.lastImplantsData.forEach(implant => {
+                    if (implant.last_seen) {
+                        const lastSeenDate = new Date(implant.last_seen + 'Z');
+                        
+                        // Encontrar a hora correspondente e incrementar o contador
+                        last24Hours.forEach(hourData => {
+                            if (lastSeenDate >= hourData.hourStart && lastSeenDate < hourData.hourEnd) {
+                                hourData.connections++;
+                            }
+                        });
+                    }
+                });
+            }
+            
+            if (timelineChart) {
+                timelineChart.destroy();
+            }
+            
+            timelineChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: last24Hours.map(h => h.time),
+                    datasets: [{
+                        label: 'Connections',
+                        data: last24Hours.map(h => h.connections),
+                        borderColor: 'rgba(0, 0, 0, 1)',
+                        backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: 'var(--text-secondary)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: 'var(--text-secondary)',
+                                maxTicksLimit: 8
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateActivityFeed(implants) {
+            const activityFeed = document.getElementById('activityFeed');
+            const activities = [];
+            
+            if (implants && implants.length > 0) {
+                implants.forEach(implant => {
+                    const lastSeen = new Date(implant.last_seen + 'Z');
+                    const now = new Date();
+                    const timeDiff = now - lastSeen;
+                    const minutesAgo = Math.floor(timeDiff / 60000);
+                    
+                    let timeText = '';
+                    if (minutesAgo < 1) {
+                        timeText = 'Just now';
+                    } else if (minutesAgo < 60) {
+                        timeText = `${minutesAgo}m ago`;
+                    } else if (minutesAgo < 1440) {
+                        timeText = `${Math.floor(minutesAgo / 60)}h ago`;
+                    } else {
+                        timeText = `${Math.floor(minutesAgo / 1440)}d ago`;
+                    }
+                    
+                    activities.push({
+                        type: minutesAgo < 5 ? 'online' : 'offline',
+                        text: `${implant.hostname} (${implant.username}) - ${implant.geo_location || 'Unknown'}`,
+                        time: timeText,
+                        timestamp: lastSeen
+                    });
+                });
+            } else {
+                activities.push({
+                    type: 'warning',
+                    text: 'No active implants detected',
+                    time: 'Now',
+                    timestamp: new Date()
+                });
+            }
+            
+            activities.sort((a, b) => b.timestamp - a.timestamp);
+            
+            activityFeed.innerHTML = activities.slice(0, 3).map(activity => `
+                <div class="activity-item">
+                    <div class="activity-dot ${activity.type}"></div>
+                    <div class="activity-content">
+                        <div class="activity-text">${activity.text}</div>
+                        <div class="activity-time">${activity.time}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function isOnlineStatus(lastSeen) {
+            if (!lastSeen) return false;
+            const lastSeenDate = new Date(lastSeen + 'Z');
+            const now = new Date();
+            return (now - lastSeenDate) < 5 * 60 * 1000; // 5 minutes
+        }
+
+        function processImplantsData(implants) {
+            dashboardData.countries = {};
+            dashboardData.operatingSystems = {};
+            
+            if (implants && implants.length > 0) {
+                implants.forEach(implant => {
+                    // Count by country using geo_location field
+                    const country = implant.geo_location || 'Unknown';
+                    dashboardData.countries[country] = (dashboardData.countries[country] || 0) + 1;
+                    
+                    // Count by OS using operating_system field
+                    const os = implant.operating_system || 'Unknown';
+                    dashboardData.operatingSystems[os] = (dashboardData.operatingSystems[os] || 0) + 1;
+                });
+            }
+        }
+
+        // Global function to refresh dashboard
+        window.updateDashboardData = function(implants) {
+            processImplantsData(implants);
+            updateActivityFeed(implants);
+        };
+
+        function showSection(section) {
+            if (section === 'dashboard') {
+                dashboardSection.style.display = 'block';
+                targetsSection.style.display = 'none';
+                terminalSection.style.display = 'none';
+                navDashboard.classList.add('active');
+                navTargets.classList.remove('active');
+                navTerminal.classList.remove('active');
+                setTimeout(updateDashboardStats, 300);
+            } else if (section === 'targets') {
+                dashboardSection.style.display = 'none';
+                targetsSection.style.display = 'block';
+                terminalSection.style.display = 'none';
+                navDashboard.classList.remove('active');
+                navTargets.classList.add('active');
+                navTerminal.classList.remove('active');
+            } else if (section === 'terminal') {
+                dashboardSection.style.display = 'none';
+                targetsSection.style.display = 'none';
+                terminalSection.style.display = 'block';
+                navDashboard.classList.remove('active');
+                navTargets.classList.remove('active');
+                navTerminal.classList.add('active');
+            }
+        }
+
+        if (navDashboard && navTargets && navTerminal) {
+            navDashboard.addEventListener('click', function(e) {
+                e.preventDefault();
+                showSection('dashboard');
+            });
+            navTargets.addEventListener('click', function(e) {
+                e.preventDefault();
+                showSection('targets');
+            });
+            navTerminal.addEventListener('click', function(e) {
+                e.preventDefault();
+                showSection('terminal');
+            });
+        }
+        
+        showSection('dashboard');
+    });
+    </script>
     <script src="app.js"></script>
 </body>
 </html>

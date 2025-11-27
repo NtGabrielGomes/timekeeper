@@ -11,3 +11,4 @@ export async function apiRequest(url, options = {}, authToken) {
     if (response.status === 401) throw new Error('Unauthorized');
     return response;
 }
+ 

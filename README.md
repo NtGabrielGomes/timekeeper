@@ -2,6 +2,9 @@
 
 Timekeeper is a Command and Control (C2) framework developed for educational and cybersecurity research. The project consists of a client written in Rust and a backend server in Python with FastAPI.
 
+![Timekeeper C2 Panel](img/painel.png)
+
+
 ## Architecture
 
 The project is divided into two main parts:
